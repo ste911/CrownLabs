@@ -46,8 +46,7 @@ type TenantReconciler struct {
 }
 
 // Reconcile reconciles the state of a tenant resource.
-func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var tn crownlabsv1alpha1.Tenant
 	if err := r.Get(ctx, req.NamespacedName, &tn); client.IgnoreNotFound(err) != nil {
 		klog.Errorf("Error when getting tenant %s before starting reconcile -> %s", req.Name, err)

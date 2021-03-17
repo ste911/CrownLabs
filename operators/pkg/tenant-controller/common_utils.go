@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
@@ -47,7 +47,7 @@ func genPredicatesForMatchLabel(targetLabelKey, targetLabelValue string) predica
 		UpdateFunc: func(e event.UpdateEvent) bool {
 			if targetLabelKey == "" && targetLabelValue == "" {
 				return e.ObjectOld != e.ObjectNew
-			} else if value, ok := e.MetaNew.GetLabels()[targetLabelKey]; !ok || targetLabelValue != value {
+			} else if value, ok := e.ObjectNew.GetLabels()[targetLabelKey]; !ok || targetLabelValue != value {
 				return false
 			}
 			return e.ObjectOld != e.ObjectNew
@@ -55,7 +55,7 @@ func genPredicatesForMatchLabel(targetLabelKey, targetLabelValue string) predica
 		CreateFunc: func(e event.CreateEvent) bool {
 			if targetLabelKey == "" && targetLabelValue == "" {
 				return true
-			} else if value, ok := e.Meta.GetLabels()[targetLabelKey]; !ok || targetLabelValue != value {
+			} else if value, ok := e.Object.GetLabels()[targetLabelKey]; !ok || targetLabelValue != value {
 				return false
 			}
 			return true
@@ -63,7 +63,7 @@ func genPredicatesForMatchLabel(targetLabelKey, targetLabelValue string) predica
 		DeleteFunc: func(e event.DeleteEvent) bool {
 			if targetLabelKey == "" && targetLabelValue == "" {
 				return true
-			} else if value, ok := e.Meta.GetLabels()[targetLabelKey]; !ok || targetLabelValue != value {
+			} else if value, ok := e.Object.GetLabels()[targetLabelKey]; !ok || targetLabelValue != value {
 				return false
 			}
 			return true
@@ -71,7 +71,7 @@ func genPredicatesForMatchLabel(targetLabelKey, targetLabelValue string) predica
 		GenericFunc: func(e event.GenericEvent) bool {
 			if targetLabelKey == "" && targetLabelValue == "" {
 				return true
-			} else if value, ok := e.Meta.GetLabels()[targetLabelKey]; !ok || targetLabelValue != value {
+			} else if value, ok := e.Object.GetLabels()[targetLabelKey]; !ok || targetLabelValue != value {
 				return false
 			}
 			return true

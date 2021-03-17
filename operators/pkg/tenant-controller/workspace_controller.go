@@ -40,8 +40,7 @@ type WorkspaceReconciler struct {
 }
 
 // Reconcile reconciles the state of a workspace resource.
-func (r *WorkspaceReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var ws crownlabsv1alpha1.Workspace
 
 	if err := r.Get(ctx, req.NamespacedName, &ws); client.IgnoreNotFound(err) != nil {
