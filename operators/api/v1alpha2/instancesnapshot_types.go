@@ -18,7 +18,6 @@ package v1alpha2
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -38,9 +37,9 @@ type InstanceSnapshotSpec struct {
 	// A template contains a list of environments, this generalize the concept of template and allow to spawn
 	// different vm or containers from the same templaate.
 	// However, at the moment this functionality has not been implemented and for each template there is one single environment.
-	// The EnvName field represent the name of the environment to be snapshotted, in order to make it compatible
+	// The Environement field represent the reference to the environment to be snapshotted, in order to make it compatible
 	// with future upgrades. If not specified, the first available environment is taken.
-	EnvName string `json:"environment-name, omitempty"`
+	Environment GenericRef `json:"environment.crownlabs.polito.it/EnvironmentRef"`
 
 	// ImageName is the name of the image to pushed in the docker registry
 	// +kubebuilder:validation:Required
@@ -55,6 +54,7 @@ type InstanceSnapshotStatus struct {
 	// - pending: if the snapshot is waiting to be created
 	// - processing: if the snapshot is under processing
 	// - failed: is an error occurred and it was not possible to create the snapshot
+	// - completed: when the snapshot is completed and the image uploaded to the docker registry
 	Phase string `json:"phase"`
 }
 
@@ -73,10 +73,6 @@ type InstanceSnapshot struct {
 	Status InstanceSnapshotStatus `json:"status,omitempty"`
 }
 
-func (i InstanceSnapshot) DeepCopyObject() runtime.Object {
-	panic("implement me")
-}
-
 // +kubebuilder:object:root=true
 
 // InstanceSnapshotList contains a list of InstanceSnapshot
@@ -84,10 +80,6 @@ type InstanceSnapshotList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []InstanceSnapshot `json:"items"`
-}
-
-func (i InstanceSnapshotList) DeepCopyObject() runtime.Object {
-	panic("implement me")
 }
 
 func init() {
