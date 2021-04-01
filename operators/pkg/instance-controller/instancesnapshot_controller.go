@@ -248,7 +248,7 @@ func (r *InstanceSnapshotReconciler) ValidateRequest(isnap *crownlabsv1alpha2.In
 		return fmt.Errorf("the vm is running. It is not possible to complete the InstanceSnapshot %s", isnap.Name), false
 	}
 
-	// TODO: uncomment when applied to real environment
+	// Check if the instance is not running
 	//vmi := &virt.VirtualMachineInstance{}
 	//// Prepare instance name
 	//name := strings.ReplaceAll(instance.Name, ".", "-")
@@ -258,9 +258,9 @@ func (r *InstanceSnapshotReconciler) ValidateRequest(isnap *crownlabsv1alpha2.In
 	//}
 	//
 	//err = r.Get(ctx, vmiName, vmi)
-	//if err != nil && errors.IsNotFound(err) {
+	//if err == nil {
 	//	return fmt.Errorf("the vm is running. It is not possible to complete the InstanceSnapshot %s", isnap.Name), false
-	//}else if err != nil {
+	//}else if err != nil && !errors.IsNotFound(err) {
 	//	return fmt.Errorf("error in retrieving the vmi for InstanceSnapshot %s -> %s", isnap.Name, err), true
 	//}
 
