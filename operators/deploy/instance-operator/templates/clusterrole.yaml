@@ -6,7 +6,7 @@ metadata:
     {{- include "instance-operator.labels" . | nindent 4 }}
 rules:
 - apiGroups: ["crownlabs.polito.it"]
-  resources: ["instances", "instances/status"]
+  resources: ["instances", "instances/status", "instancesnapshots", "instancesnapshots/status"]
   verbs: ["get","list","watch","create","update","patch","delete", "deleteCollection"]
 
 - apiGroups: ["crownlabs.polito.it"]
@@ -24,6 +24,10 @@ rules:
 - apiGroups: ["apps"]
   resources: ["deployments"]
   verbs: ["get","list","watch","create","patch","update"]
+
+- apiGroups: ["batch", "extensions"]
+  resources: ["jobs", "jobs/status"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
 - apiGroups: ["networking.k8s.io"]
   resources: ["ingresses"]

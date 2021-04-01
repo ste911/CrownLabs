@@ -23,39 +23,51 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// InstanceSnapshotSpec defines the desired state of InstanceSnapshot
+// SnapshotStatus is an enumeration representing the current state of the InstanceSnapshot.
+type SnapshotStatus string
+
+const (
+	// Pending -> The request have been created but the snapshot
+	// is waiting to be created.
+	Pending SnapshotStatus = "pending"
+	// Processing -> The process of creation of the snapshot started.
+	Processing SnapshotStatus = "processing"
+	// Completed -> The snapshot of the instance has been created.
+	Completed SnapshotStatus = "completed"
+	// Failed -> Unfortunately the process of creation of the snapshot failed.
+	Failed SnapshotStatus = "failed"
+)
+
+// InstanceSnapshotSpec defines the desired state of InstanceSnapshot.
 type InstanceSnapshotSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
+	// +kubebuilder:validation:Required
+
 	// Instance is the reference to the persistent VM instance to be snapshotted
 	// the instance should not be running, otherwise it won't be possible to
-	// steal the volume and extract its content
-	// +kubebuilder:validation:Required
+	// steal the volume and extract its content.
 	Instance GenericRef `json:"instance.crownlabs.polito.it/InstanceRef"`
 
 	// A template contains a list of environments, this generalize the concept of template and allow to spawn
-	// different vm or containers from the same templaate.
+	// different vm or containers from the same template.
 	// However, at the moment this functionality has not been implemented and for each template there is one single environment.
-	// The Environement field represent the reference to the environment to be snapshotted, in order to make it compatible
+	// The Environment field represent the reference to the environment to be snapshotted, in order to make it compatible
 	// with future upgrades. If not specified, the first available environment is taken.
 	Environment GenericRef `json:"environment.crownlabs.polito.it/EnvironmentRef"`
 
-	// ImageName is the name of the image to pushed in the docker registry
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:MinLength.=1
+
+	// ImageName is the name of the image to pushed in the docker registry.
 	ImageName string `json:"image-name"`
 }
 
-// InstanceSnapshotStatus defines the observed state of InstanceSnapshot
+// InstanceSnapshotStatus defines the observed state of InstanceSnapshot.
 type InstanceSnapshotStatus struct {
 	// Phase represent current state of the creation of the vm instance snapshot
-	// it could be:
-	// - pending: if the snapshot is waiting to be created
-	// - processing: if the snapshot is under processing
-	// - failed: is an error occurred and it was not possible to create the snapshot
-	// - completed: when the snapshot is completed and the image uploaded to the docker registry
-	Phase string `json:"phase"`
+	Phase SnapshotStatus `json:"phase"`
 }
 
 // +kubebuilder:object:root=true
@@ -64,7 +76,7 @@ type InstanceSnapshotStatus struct {
 // +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
 // +kubebuilder:printcolumn:name="ImageName",type=string,JSONPath=`.spec.image-name`
 
-// InstanceSnapshot is the Schema for the instancesnapshots API
+// InstanceSnapshot is the Schema for the instancesnapshots API.
 type InstanceSnapshot struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -75,7 +87,7 @@ type InstanceSnapshot struct {
 
 // +kubebuilder:object:root=true
 
-// InstanceSnapshotList contains a list of InstanceSnapshot
+// InstanceSnapshotList contains a list of InstanceSnapshot.
 type InstanceSnapshotList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
