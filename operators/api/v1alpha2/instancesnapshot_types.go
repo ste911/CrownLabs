@@ -29,21 +29,19 @@ type SnapshotStatus string
 const (
 	// Pending -> The request have been created but the snapshot
 	// is waiting to be created.
-	Pending SnapshotStatus = "pending"
+	Pending SnapshotStatus = "Pending"
 	// Processing -> The process of creation of the snapshot started.
-	Processing SnapshotStatus = "processing"
+	Processing SnapshotStatus = "Processing"
 	// Completed -> The snapshot of the instance has been created.
-	Completed SnapshotStatus = "completed"
+	Completed SnapshotStatus = "Completed"
 	// Failed -> Unfortunately the process of creation of the snapshot failed.
-	Failed SnapshotStatus = "failed"
+	Failed SnapshotStatus = "Failed"
 )
 
 // InstanceSnapshotSpec defines the desired state of InstanceSnapshot.
 type InstanceSnapshotSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-
-	// +kubebuilder:validation:Required
 
 	// Instance is the reference to the persistent VM instance to be snapshotted
 	// the instance should not be running, otherwise it won't be possible to
@@ -57,8 +55,7 @@ type InstanceSnapshotSpec struct {
 	// with future upgrades. If not specified, the first available environment is taken.
 	Environment GenericRef `json:"environment.crownlabs.polito.it/EnvironmentRef"`
 
-	// +kubebuilder:validation:Required
-	// +kubebuilder:validation:MinLength.=1
+	// +kubebuilder:validation:MinLength=1
 
 	// ImageName is the name of the image to pushed in the docker registry.
 	ImageName string `json:"image-name"`
