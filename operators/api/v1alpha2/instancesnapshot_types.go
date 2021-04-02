@@ -27,14 +27,14 @@ import (
 type SnapshotStatus string
 
 const (
-	// Pending -> The request have been created but the snapshot
-	// is waiting to be created.
+	// Pending -> The snapshot resource has been observed and the
+	// process is waiting to be started.
 	Pending SnapshotStatus = "pending"
 	// Processing -> The process of creation of the snapshot started.
 	Processing SnapshotStatus = "processing"
 	// Completed -> The snapshot of the instance has been created.
 	Completed SnapshotStatus = "completed"
-	// Failed -> Unfortunately the process of creation of the snapshot failed.
+	// Failed -> The process of creation of the snapshot failed.
 	Failed SnapshotStatus = "failed"
 )
 
@@ -45,17 +45,17 @@ type InstanceSnapshotSpec struct {
 
 	// +kubebuilder:validation:Required
 
-	// Instance is the reference to the persistent VM instance to be snapshotted
-	// the instance should not be running, otherwise it won't be possible to
+	// Instance is the reference to the persistent VM instance to be snapshotted.
+	// The instance should not be running, otherwise it won't be possible to
 	// steal the volume and extract its content.
 	Instance GenericRef `json:"instance.crownlabs.polito.it/InstanceRef"`
 
 	// A template contains a list of environments, this generalize the concept of template and allow to spawn
 	// different vm or containers from the same template.
 	// However, at the moment this functionality has not been implemented and for each template there is one single environment.
-	// The Environment field represent the reference to the environment to be snapshotted, in order to make it compatible
-	// with future upgrades. If not specified, the first available environment is taken.
-	Environment GenericRef `json:"environment.crownlabs.polito.it/EnvironmentRef"`
+	// Environment represents the reference to the environment to be snapshotted, in case more are
+	// associated with the same Instance. If not specified, the first available environment is considered.
+	Environment GenericRef `json:"environment.crownlabs.polito.it/EnvironmentRef",omitempty`
 
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:MinLength.=1
@@ -66,7 +66,7 @@ type InstanceSnapshotSpec struct {
 
 // InstanceSnapshotStatus defines the observed state of InstanceSnapshot.
 type InstanceSnapshotStatus struct {
-	// Phase represent current state of the creation of the vm instance snapshot
+	// Phase represents the current state of the Instance Snapshot.
 	Phase SnapshotStatus `json:"phase"`
 }
 
