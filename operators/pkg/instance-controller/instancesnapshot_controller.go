@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Package instance_controller groups the functionalities related to the Instance controller.
 package instance_controller
 
 import (
@@ -38,6 +39,7 @@ import (
 	instancecreation "github.com/netgroup-polito/CrownLabs/operators/pkg/instance-creation"
 )
 
+// InstanceSnapshotReconciler reconciles a InstanceSnapshot object.
 type InstanceSnapshotReconciler struct {
 	client.Client
 	EventsRecorder     record.EventRecorder
@@ -47,7 +49,6 @@ type InstanceSnapshotReconciler struct {
 
 // Reconcile reconciles the status of the InstanceSnapshot resource.
 func (r *InstanceSnapshotReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-
 	isnap := &crownlabsv1alpha2.InstanceSnapshot{}
 
 	if err := r.Get(ctx, req.NamespacedName, isnap); client.IgnoreNotFound(err) != nil {
@@ -59,7 +60,7 @@ func (r *InstanceSnapshotReconciler) Reconcile(ctx context.Context, req ctrl.Req
 	}
 
 	// Check the selector label, in order to know whether to perform or not reconciliation.
-	proceed, err := r.CheckSelectorLabel(*isnap, ctx, req)
+	proceed, err := r.CheckSelectorLabel(ctx, isnap, req)
 
 	if !proceed {
 		// If there was an error while checking, show the error and try again.
@@ -74,7 +75,7 @@ func (r *InstanceSnapshotReconciler) Reconcile(ctx context.Context, req ctrl.Req
 
 	// Get the job to be created
 	snapjob := &batch.Job{}
-	r.GetSnapshottingJob(*isnap, snapjob)
+	r.GetSnapshottingJob(isnap, snapjob)
 
 	// Check the current status of the InstanceSnapshot by checking
 	// the state of its assigned job.
@@ -175,8 +176,8 @@ func (r *InstanceSnapshotReconciler) Reconcile(ctx context.Context, req ctrl.Req
 	return ctrl.Result{}, nil
 }
 
-// CheckSelectorLabel checks if the InstanceSnapshot belongs to the whitelisted namespaces where to perform reconciliation
-func (r *InstanceSnapshotReconciler) CheckSelectorLabel(isnap crownlabsv1alpha2.InstanceSnapshot, ctx context.Context, req ctrl.Request) (bool, error) {
+// CheckSelectorLabel checks if the InstanceSnapshot belongs to the whitelisted namespaces where to perform reconciliation.
+func (r *InstanceSnapshotReconciler) CheckSelectorLabel(ctx context.Context, isnap *crownlabsv1alpha2.InstanceSnapshot, req ctrl.Request) (bool, error) {
 	ns := corev1.Namespace{}
 	namespaceName := types.NamespacedName{
 		Name:      isnap.Namespace,
@@ -191,7 +192,7 @@ func (r *InstanceSnapshotReconciler) CheckSelectorLabel(isnap crownlabsv1alpha2.
 			return false, nil
 		}
 	} else {
-		return false, fmt.Errorf("error when retrieving the InstanceSnapshot namespace -> %s", err)
+		return false, fmt.Errorf("error when retrieving the InstanceSnapshot namespace -> %w", err)
 	}
 
 	klog.Info("Namespace " + req.Namespace + " met the selector labels")
@@ -287,7 +288,7 @@ func (r *InstanceSnapshotReconciler) GetJobStatus(job *batch.Job) (bool, batch.J
 }
 
 // GetSnapshottingJob generates the job to be created.
-func (r *InstanceSnapshotReconciler) GetSnapshottingJob(isnap crownlabsv1alpha2.InstanceSnapshot, job *batch.Job) {
+func (r *InstanceSnapshotReconciler) GetSnapshottingJob(isnap *crownlabsv1alpha2.InstanceSnapshot, job *batch.Job) {
 	var backoff int32 = 2
 	imagedir := isnap.Namespace
 	imagetag := fmt.Sprint(time.Now().Format("02012006t150405"))
@@ -338,9 +339,9 @@ func (r *InstanceSnapshotReconciler) GetSnapshottingJob(isnap crownlabsv1alpha2.
 		},
 	}
 
-	// Define containers
+	// Define containers.
 
-	// Define Docker pusher container
+	// Define Docker pusher container.
 	pushcontainer := corev1.Container{
 		Name:  "docker-pusher",
 		Image: "gcr.io/kaniko-project/executor:latest",
@@ -358,7 +359,7 @@ func (r *InstanceSnapshotReconciler) GetSnapshottingJob(isnap crownlabsv1alpha2.
 		},
 	}
 
-	// Define image exporter container
+	// Define image exporter container.
 	exportcontainer := corev1.Container{
 		Name: "img-generator",
 		// TODO replace image
