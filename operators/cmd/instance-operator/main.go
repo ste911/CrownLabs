@@ -109,6 +109,15 @@ func main() {
 		klog.Fatal(err, "unable to create controller", "controller", "Instance")
 	}
 
+	if err = (&instance_controller.InstanceSnapshotReconciler{
+		Client:             mgr.GetClient(),
+		Scheme:             mgr.GetScheme(),
+		EventsRecorder:     mgr.GetEventRecorderFor("instance-snapshot"),
+		NamespaceWhitelist: metav1.LabelSelector{MatchLabels: whiteListMap, MatchExpressions: []metav1.LabelSelectorRequirement{}},
+	}).SetupWithManager(mgr); err != nil {
+		klog.Fatal(err, "unable to create controller", "controller", "InstanceSnapshot")
+	}
+
 	// +kubebuilder:scaffold:builder
 	// Add readiness probe
 	err = mgr.AddReadyzCheck("ready-ping", healthz.Ping)
