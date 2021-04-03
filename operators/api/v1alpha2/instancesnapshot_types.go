@@ -53,7 +53,7 @@ type InstanceSnapshotSpec struct {
 	// However, at the moment this functionality has not been implemented and for each template there is one single environment.
 	// Environment represents the reference to the environment to be snapshotted, in case more are
 	// associated with the same Instance. If not specified, the first available environment is considered.
-	Environment GenericRef `json:"environment.crownlabs.polito.it/EnvironmentRef",omitempty`
+	Environment GenericRef `json:"environment.crownlabs.polito.it/EnvironmentRef,omitempty"`
 
 	// +kubebuilder:validation:MinLength=1
 

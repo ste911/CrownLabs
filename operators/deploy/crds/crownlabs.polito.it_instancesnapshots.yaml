@@ -50,10 +50,9 @@ spec:
                   the concept of template and allow to spawn different vm or containers
                   from the same template. However, at the moment this functionality
                   has not been implemented and for each template there is one single
-                  environment. The Environment field represent the reference to the
-                  environment to be snapshotted, in order to make it compatible with
-                  future upgrades. If not specified, the first available environment
-                  is taken.
+                  environment. Environment represents the reference to the environment
+                  to be snapshotted, in case more are associated with the same Instance.
+                  If not specified, the first available environment is considered.
                 properties:
                   name:
                     description: The name of the resource to be referenced.
@@ -68,10 +67,11 @@ spec:
               image-name:
                 description: ImageName is the name of the image to pushed in the docker
                   registry.
+                minLength: 1
                 type: string
               instance.crownlabs.polito.it/InstanceRef:
                 description: Instance is the reference to the persistent VM instance
-                  to be snapshotted the instance should not be running, otherwise
+                  to be snapshotted. The instance should not be running, otherwise
                   it won't be possible to steal the volume and extract its content.
                 properties:
                   name:
@@ -85,7 +85,6 @@ spec:
                 - name
                 type: object
             required:
-            - environment.crownlabs.polito.it/EnvironmentRef
             - image-name
             - instance.crownlabs.polito.it/InstanceRef
             type: object
@@ -93,8 +92,7 @@ spec:
             description: InstanceSnapshotStatus defines the observed state of InstanceSnapshot.
             properties:
               phase:
-                description: Phase represent current state of the creation of the
-                  vm instance snapshot
+                description: Phase represents the current state of the Instance Snapshot.
                 type: string
             required:
             - phase
