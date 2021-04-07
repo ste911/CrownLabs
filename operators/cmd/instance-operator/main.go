@@ -17,7 +17,6 @@ package main
 
 import (
 	"flag"
-
 	"os"
 	"strings"
 
@@ -35,7 +34,7 @@ import (
 	crownlabsv1alpha1 "github.com/netgroup-polito/CrownLabs/operators/api/v1alpha1"
 	crownlabsv1alpha2 "github.com/netgroup-polito/CrownLabs/operators/api/v1alpha2"
 	instance_controller "github.com/netgroup-polito/CrownLabs/operators/pkg/instance-controller"
-    instancesnapshot_controller "github.com/netgroup-polito/CrownLabs/operators/pkg/instancesnapshot-controller"
+	instancesnapshot_controller "github.com/netgroup-polito/CrownLabs/operators/pkg/instancesnapshot-controller"
 	// +kubebuilder:scaffold:imports
 )
 
